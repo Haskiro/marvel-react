@@ -39,7 +39,7 @@ class CharList extends Component {
                 <div className="char__name">{char.name}</div>
             </li>
         ))
-        const content = loading ? <Spinner className={'spinner'} /> : charListView;
+        const content = loading ? <Spinner className={'char-list-spinner'} /> : charListView;
 
         return (
             <div className="char__list">

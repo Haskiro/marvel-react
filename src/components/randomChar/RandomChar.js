@@ -65,7 +65,7 @@ class RandomChar extends Component {
     render() {
         const { char, loading, error, imgNotFound } = this.state;
         const errorMessage = error ? <ErrorMessage /> : null;
-        const spinner = loading ? <Spinner /> : null;
+        const spinner = loading ? <Spinner className='random-char-spinner' /> : null;
         const content = !(loading || error) ? <View char={char} imgNotFound={imgNotFound} /> : null;
 
         return (
