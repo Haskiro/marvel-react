@@ -19,7 +19,7 @@
         object-fit: cover;
 
         &.not-found {
-            object-fit: contain;
+            object-fit: unset;
         }
     }
 

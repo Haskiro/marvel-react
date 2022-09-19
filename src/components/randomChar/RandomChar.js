@@ -17,12 +17,12 @@ class RandomChar extends Component {
 
     componentDidMount() {
         this.updateChar();
-        this.timerId = setInterval(this.updateChar, 3000);
+        // this.timerId = setInterval(this.updateChar, 3000);
     }
 
-    componentWillUnmount() {
-        clearInterval(this.timerId)
-    }
+    // componentWillUnmount() {
+    //     clearInterval(this.timerId)
+    // }
 
     onImgNotFound = (thumbnail) => {
         if (thumbnail === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg") {
@@ -39,14 +39,16 @@ class RandomChar extends Component {
     onCharLoaded = (char) => {
         this.setState({
             char,
-            loading: false
+            loading: false,
+            error: false
         });
         this.onImgNotFound(char.thumbnail);
     }
 
     updateChar = () => {
         this.setState({
-            loading: true
+            loading: true,
+            error: false
         })
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
         this.marvelService
@@ -81,8 +83,8 @@ class RandomChar extends Component {
                     <p className="randomchar__title">
                         Or choose another one
                     </p>
-                    <button className="button button__main">
-                        <div className="inner" onClick={this.updateChar}>try it</div>
+                    <button className="button button__main" onClick={this.updateChar}>
+                        <div className="inner">try it</div>
                     </button>
                     <img src={mjolnir} alt="mjolnir" className="randomchar__decoration" />
                 </div>
