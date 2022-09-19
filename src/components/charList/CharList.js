@@ -38,7 +38,6 @@ class CharList extends Component {
             .getAllCharacters(offset)
             .then(this.onCharListLoaded)
             .catch(this.onError);
-
     }
 
     onCharListLoaded = (newCharList) => {
