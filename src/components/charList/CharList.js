@@ -1,6 +1,6 @@
 import './charList.scss';
 import Spinner from '../spinner/Spinner'
-import { Component } from 'react';
+import React, { Component } from 'react';
 import MarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 
@@ -12,6 +12,20 @@ class CharList extends Component {
         offset: 210,
         newItemLoading: false,
         charEnded: false
+    }
+
+    refsList = []
+
+    setRefs = elem => {
+        this.refsList.push(elem);
+    }
+
+    focusOnItem = (id) => {
+        this.refsList.forEach(item => {
+            item.classList.remove('char__item_selected')
+        });
+        this.refsList[id].classList.add('char__item_selected')
+        this.refsList[id].focus();
     }
 
     marvelService = new MarvelService();
@@ -62,26 +76,31 @@ class CharList extends Component {
         )
     }
 
-    // updateCharList = () => {
-    //     this.setState({
-    //         loading: true,
-    //         error: false,
-    //     });
-    //     this.marvelService
-    //         .getAllCharacters()
-    //         .then(this.onCharListLoaded)
-    //         .catch(this.onError)
-    // }
-
     render() {
         const { charList, loading, error, newItemLoading, offset, charEnded } = this.state;
-        const charListView = charList.map(char => {
+
+        const charListView = charList.map((char, i) => {
             let imgStyle = { 'objectFit': 'cover' }
             if (char.thumbnail === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg") {
                 imgStyle = { 'objectFit': 'unset' }
             }
             return (
-                <li className="char__item" key={char.id} onClick={() => this.props.onCharSelected(char.id)}>
+                <li
+                    className="char__item"
+                    key={char.id}
+                    tabIndex={0}
+                    ref={this.setRefs}
+                    onClick={() => {
+                        this.props.onCharSelected(char.id)
+                        this.focusOnItem(i);
+                    }}
+                    onKeyPress={(e) => {
+                        if (e.key === ' ' || e.key === "Enter") {
+                            this.props.onCharSelected(char.id);
+                            this.focusOnItem(i);
+                        }
+                    }}
+                >
                     <img src={char.thumbnail} alt={char.name} style={imgStyle} />
                     <div className="char__name">{char.name}</div>
                 </li>
