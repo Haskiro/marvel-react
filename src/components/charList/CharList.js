@@ -45,7 +45,6 @@ const CharList = ({ onCharSelected }) => {
         setCharEnded(ended);
     }
 
-
     const charListView = charList.map((char, i) => {
         let imgStyle = { 'objectFit': 'cover' }
         if (char.thumbnail === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg") {
@@ -74,7 +73,7 @@ const CharList = ({ onCharSelected }) => {
         )
     })
 
-    const spinner = (loading && !newItemLoading) ? <Spinner className={'char-list-spinner'} /> : null;
+    const spinner = (loading && !newItemLoading) ? <Spinner className='char-list-spinner' /> : null;
     const errorMessage = error ? <ErrorMessage /> : null
 
     return (
