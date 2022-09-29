@@ -1,10 +1,9 @@
 import './comicsList.scss';
-import uw from '../../resources/img/UW.png';
-import xMen from '../../resources/img/x-men.png';
 import useMarvelService from '../../services/MarvelService';
 import { useEffect, useRef, useState } from 'react';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
+import { Link } from 'react-router-dom';
 
 const ComicsList = () => {
     const { loading, error, getAllComics } = useMarvelService();
@@ -62,11 +61,11 @@ const ComicsList = () => {
                     }
                 }}
             >
-                <a href="#">
+                <Link to={`/comics/${comics.id}`}>
                     <img src={comics.thumbnail} alt="ultimate war" className="comics__item-img" style={imgStyle} />
                     <div className="comics__item-name">{comics.title}</div>
-                    <div className="comics__item-price">{comics.price}$</div>
-                </a>
+                    <div className="comics__item-price">{comics.price}</div>
+                </Link>
             </li >
         )
     }
