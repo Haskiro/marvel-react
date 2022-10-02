@@ -38,6 +38,32 @@
             box-shadow: 0 5px 20px $main-color;
             transform: translateY(-8px);
         }
+
+        &-enter {
+            opacity: 0;
+            transform: translateY(-10px);
+
+            &-active {
+                opacity: 1;
+                transition: all 300ms ease-in;
+                transform: translateY(10px);
+            }
+
+            &-done {
+                transform: translateY(10px);
+            }
+        }
+
+        &-exit {
+            opacity: 1;
+            transform: translateY(10px);
+
+            &-active {
+                opacity: 0;
+                transition: opacity 300ms ease-in;
+                transform: translateY(-10px);
+            }
+        }
     }
 
     &__name {
@@ -47,6 +73,7 @@
         text-transform: uppercase;
         color: #fff;
     }
+
 }
 
 .char-list-spinner {

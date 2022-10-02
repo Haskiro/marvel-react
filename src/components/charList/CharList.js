@@ -3,6 +3,7 @@ import Spinner from '../spinner/Spinner'
 import React, { useState, useEffect, useRef } from 'react';
 import useMarvelService from '../../services/MarvelService';
 import ErrorMessage from '../errorMessage/ErrorMessage';
+import { TransitionGroup, CSSTransition, Transition } from 'react-transition-group';
 
 const CharList = ({ onCharSelected }) => {
 
@@ -51,37 +52,51 @@ const CharList = ({ onCharSelected }) => {
             imgStyle = { 'objectFit': 'unset' }
         }
         return (
-            <li
-                className="char__item"
+            <CSSTransition
                 key={char.id}
-                tabIndex={0}
-                ref={el => refsList.current[i] = el}
-                onClick={() => {
-                    onCharSelected(char.id)
-                    focusOnItem(i);
-                }}
-                onKeyPress={(e) => {
-                    if (e.key === ' ' || e.key === "Enter") {
-                        onCharSelected(char.id);
-                        focusOnItem(i);
-                    }
-                }}
+                in={charList !== []}
+                timeout={300}
+                classNames="char__item"
+                mountOnEnter
+                unmountOnExit
             >
-                <img src={char.thumbnail} alt={char.name} style={imgStyle} />
-                <div className="char__name">{char.name}</div>
-            </li>
+                <li
+                    className="char__item"
+                    tabIndex={0}
+                    ref={el => refsList.current[i] = el}
+                    onClick={() => {
+                        onCharSelected(char.id)
+                        focusOnItem(i);
+                    }}
+                    onKeyPress={(e) => {
+                        if (e.key === ' ' || e.key === "Enter") {
+                            onCharSelected(char.id);
+                            focusOnItem(i);
+                        }
+                    }}
+                >
+                    <img src={char.thumbnail} alt={char.name} style={imgStyle} />
+                    <div className="char__name">{char.name}</div>
+                </li>
+            </CSSTransition>
         )
     })
 
-    const spinner = (loading && !newItemLoading) ? <Spinner className='char-list-spinner' /> : null;
+    const spinner = (loading && !newItemLoading) ?
+        <Transition in={loading && !newItemLoading} timeout={0}>
+            <Spinner className='char-list-spinner' />
+        </Transition>
+        : null;
     const errorMessage = error ? <ErrorMessage /> : null
 
     return (
         <div className="char__list">
-            <ul className="char__grid">
-                {charListView}
-                {spinner}
-                {errorMessage}
+            <ul className='char__grid'>
+                <TransitionGroup component={null}>
+                    {charListView}
+                    {spinner}
+                    {errorMessage}
+                </TransitionGroup>
             </ul>
             <button
                 className="button button__main button__long"

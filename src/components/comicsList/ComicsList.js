@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import { Link } from 'react-router-dom';
+import { TransitionGroup, Transition, CSSTransition } from 'react-transition-group';
 
 const ComicsList = () => {
     const { loading, error, getAllComics } = useMarvelService();
@@ -50,36 +51,51 @@ const ComicsList = () => {
             imgStyle = { 'objectFit': 'unset' }
         }
         return (
-            <li
-                className="comics__item"
+            <CSSTransition
                 key={comics.id}
-                ref={el => refsList.current[i] = el}
-                onClick={() => focusOnItem(i)}
-                onKeyPress={(e) => {
-                    if (e.key === ' ' || e.key === "Enter") {
-                        focusOnItem(i);
-                    }
-                }}
+                in={comicsList !== []}
+                timeout={300}
+                classNames="comics__item"
+                mountOnEnter
+                unmountOnExit
             >
-                <Link to={`/comics/${comics.id}`}>
-                    <img src={comics.thumbnail} alt="ultimate war" className="comics__item-img" style={imgStyle} />
-                    <div className="comics__item-name">{comics.title}</div>
-                    <div className="comics__item-price">{comics.price}</div>
-                </Link>
-            </li >
+                <li
+                    className="comics__item"
+                    key={comics.id}
+                    ref={el => refsList.current[i] = el}
+                    onClick={() => focusOnItem(i)}
+                    onKeyPress={(e) => {
+                        if (e.key === ' ' || e.key === "Enter") {
+                            focusOnItem(i);
+                        }
+                    }}
+                >
+                    <Link to={`/comics/${comics.id}`}>
+                        <img src={comics.thumbnail} alt="ultimate war" className="comics__item-img" style={imgStyle} />
+                        <div className="comics__item-name">{comics.title}</div>
+                        <div className="comics__item-price">{comics.price}</div>
+                    </Link>
+                </li >
+            </CSSTransition>
         )
     }
     )
 
-    const spinner = (loading && !newItemLoading) ? <Spinner className={'comics-list-spinner'} /> : null;
+    const spinner = (loading && !newItemLoading) ?
+        <Transition in={loading && !newItemLoading} timeout={0}>
+            <Spinner className='comics-list-spinner' />
+        </Transition>
+        : null;
     const errorMessage = error ? <ErrorMessage /> : null;
 
     return (
         <div className="comics__list">
             <ul className="comics__grid">
-                {spinner}
-                {errorMessage}
-                {comicsView}
+                <TransitionGroup component={null}>
+                    {spinner}
+                    {errorMessage}
+                    {comicsView}
+                </TransitionGroup>
             </ul>
             <button
                 className="button button__main button__long"

@@ -40,6 +40,32 @@
         &:hover {
             transform: translateY(-5px);
         }
+
+        &-enter {
+            opacity: 0;
+            transform: translateY(-10px);
+
+            &-active {
+                opacity: 1;
+                transition: all 300ms ease-in;
+                transform: translateY(10px);
+            }
+
+            &-done {
+                transform: translateY(10px);
+            }
+        }
+
+        &-exit {
+            opacity: 1;
+            transform: translateY(10px);
+
+            &-active {
+                opacity: 0;
+                transition: opacity 300ms ease-in;
+                transform: translateY(-10px);
+            }
+        }
     }
 }
 
