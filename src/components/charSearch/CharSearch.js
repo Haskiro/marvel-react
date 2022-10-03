@@ -6,35 +6,64 @@ import * as Yup from 'yup';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import { Link } from 'react-router-dom';
 
+const setContent = (process, Component, Results, char) => {
+    switch (process) {
+        case 'waiting':
+            return <Component loading={false} />;
+        case 'loading':
+            return <Component loading={true} />;
+        case 'confirmed':
+            return (
+                <>
+                    <Component loading={false} />
+                    <Results char={char} />
+                </>
+            );
+        case 'error':
+            <>
+                <Component loading='false' />
+                <div className="char__search-critical-error"><ErrorMessage /></div>
+            </>
+            return;
+        default:
+            throw new Error('Unexpected process state');
+    }
+}
+
 
 const CharSearch = () => {
-    const { loading, error, getCharacterByName } = useMarvelService();
-    const [char, setChar] = useState(null)
+    const { getCharacterByName, process, setProcess, clearError } = useMarvelService();
+    const [char, setChar] = useState([])
 
     const updateChar = (charName) => {
+        clearError();
         getCharacterByName(charName)
-            .then(onCharLoaded);
+            .then(onCharLoaded)
+            .then(() => setProcess('confirmed'))
     }
-
+    console.log(process)
 
     const onCharLoaded = (char) => {
         setChar(char);
     }
 
-    const errorMessage = error ? <div className="char__search-critical-error"><ErrorMessage /></div> : null;
-    const results = !char ? null : char.length > 0 ?
-        <div className="char__search-wrapper">
-            <div className="char__search-success">There is! Visit {char[0].name} page?</div>
-            <Link to={`/char/${char[0].id}`} className="button button__secondary">
-                <div className="inner">To page</div>
-            </Link>
-        </div> :
-        <div className="char__search-error">
-            The character was not found. Check the name and try again
-        </div>;
+    const Results = ({ char }) => {
+        return (
+            (char.length > 0) ?
+                <div className="char__search-wrapper">
+                    <div className="char__search-success">There is! Visit {char[0].name} page?</div>
+                    <Link to={`/char/${char[0].id}`} className="button button__secondary">
+                        <div className="inner">To page</div>
+                    </Link>
+                </div> :
+                <div className="char__search-error">
+                    The character was not found. Check the name and try again
+                </div>
+        )
+    }
 
-    return (
-        <div className="char__search-form">
+    const FormComponent = ({ loading }) => {
+        return (
             <Formik
                 component={null}
                 initialValues={{ charName: '' }}
@@ -64,8 +93,13 @@ const CharSearch = () => {
                     <FormikErrorMessage component="div" className="char__search-error" name="charName" />
                 </Form>
             </Formik>
-            {errorMessage}
-            {results}
+
+        )
+    }
+
+    return (
+        <div className="char__search-form">
+            {setContent(process, FormComponent, Results, char)}
         </div>
     )
 }

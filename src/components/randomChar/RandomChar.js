@@ -2,15 +2,13 @@ import './randomChar.scss';
 import { useState, useEffect } from 'react';
 import mjolnir from '../../resources/img/mjolnir.png';
 import useMarvelService from '../../services/MarvelService';
-import Spinner from '../spinner/Spinner';
-import ErrorMessage from '../errorMessage/ErrorMessage'
+import setContent from '../../utils/setContent';
 
 const RandomChar = () => {
 
     const [char, setChar] = useState({});
-    const [imgNotFound, setImgNotFound] = useState(false);
 
-    const { loading, error, getCharacter, clearError } = useMarvelService();
+    const { getCharacter, clearError, process, setProcess } = useMarvelService();
 
     useEffect(() => {
         updateChar();
@@ -19,17 +17,9 @@ const RandomChar = () => {
         return () => clearInterval(timerId);
     }, []);
 
-    const onImgNotFound = (thumbnail) => {
-        if (thumbnail === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg") {
-            setImgNotFound(true);
-        } else {
-            setImgNotFound(false);
-        }
-    }
 
     const onCharLoaded = (char) => {
         setChar(char);
-        onImgNotFound(char.thumbnail);
     }
 
     const updateChar = () => {
@@ -37,18 +27,16 @@ const RandomChar = () => {
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
         getCharacter(id)
             .then(onCharLoaded)
+            .then(() => setProcess('confirmed'));
     }
 
-
-    const errorMessage = error ? <ErrorMessage /> : null;
-    const spinner = loading ? <Spinner className='random-char-spinner' /> : null;
-    const content = !(loading || error) ? <View char={char} imgNotFound={imgNotFound} /> : null;
+    const styles = {
+        'margin': '0px auto'
+    }
 
     return (
         <div className="randomchar">
-            {errorMessage}
-            {spinner}
-            {content}
+            {setContent(process, View, char, styles)}
             <div className="randomchar__static">
                 <p className="randomchar__title">
                     Random character for today!<br />
@@ -67,13 +55,16 @@ const RandomChar = () => {
 
 }
 
-const View = ({ char, imgNotFound }) => {
-    const { name, description, thumbnail, homepage, wiki } = char;
-    const imgClass = imgNotFound ? 'randomchar__img not-found' : 'randomchar__img';
+const View = ({ data }) => {
+    const { name, description, thumbnail, homepage, wiki } = data;
+    let imgStyle = { 'objectFit': 'cover' }
+    if (thumbnail === "http://i.annihil.us/u/prod/marvel/i/mg/b/40/image_not_available.jpg") {
+        imgStyle = { 'objectFit': 'unset' }
+    }
 
     return (
         <div className="randomchar__block">
-            <img src={thumbnail} alt="Random character" className={imgClass} />
+            <img src={thumbnail} alt="Random character" className='randomchar__img' style={imgStyle} />
             <div className="randomchar__info">
                 <p className="randomchar__name">{name}</p>
                 <p className="randomchar__descr">
