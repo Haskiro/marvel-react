@@ -1,6 +1,6 @@
 @import '../../style/variables.scss';
 
-.single-comic {
+.single-char {
     margin-top: 50px;
     display: grid;
     grid-template-columns: 293px 550px auto;
@@ -9,7 +9,7 @@
 
     &__img {
         width: 293px;
-        height: 450px;
+        height: 293px;
     }
 
     &__name {
@@ -21,14 +21,6 @@
     &__descr {
         font-size: 18px;
         line-height: 24px;
-        margin-top: 25px;
-    }
-
-    &__price {
-        font-weight: bold;
-        font-size: 24px;
-        line-height: 32px;
-        color: $main-color;
         margin-top: 25px;
     }
 
@@ -44,9 +36,9 @@
     }
 }
 
-.single-comics-spinner {
+.single-char-spinner {
     position: absolute;
-    top: 10px;
+    top: 130px;
     left: 50%;
     transform: translateX(-50%);
 }

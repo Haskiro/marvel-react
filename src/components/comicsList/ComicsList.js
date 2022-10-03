@@ -42,7 +42,6 @@ const ComicsList = () => {
         setOffset(offset => offset + 12)
         setComicsList([...comicsList, ...newComics]);
         setComicsEnded(ended);
-        console.log(comicsList)
     }
 
     const comicsView = comicsList.map((comics, i) => {
