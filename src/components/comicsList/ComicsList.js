@@ -1,6 +1,6 @@
 import './comicsList.scss';
 import useMarvelService from '../../services/MarvelService';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Spinner from '../spinner/Spinner';
@@ -102,11 +102,18 @@ const ComicsList = () => {
         )
     }
 
+    const elements = useMemo(() => {
+        return (
+            setContent(process, () => renderComics(comicsList), newItemLoading)
+        )
+        // eslint-disable-next-line
+    }, [process])
+
 
     return (
         <div className="comics__list">
             <ul className="comics__grid">
-                {setContent(process, () => renderComics(comicsList), newItemLoading)}
+                {elements}
             </ul>
             <button
                 className="button button__main button__long"

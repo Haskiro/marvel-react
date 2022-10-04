@@ -1,5 +1,5 @@
 import './charList.scss';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import useMarvelService from '../../services/MarvelService';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Spinner from '../spinner/Spinner';
@@ -107,10 +107,17 @@ const CharList = ({ onCharSelected }) => {
         )
     }
 
+    const elements = useMemo(() => {
+        return (
+            setContent(process, () => renderItems(charList), newItemLoading)
+        )
+        // eslint-disable-next-line
+    }, [process])
+
     return (
         <div className="char__list">
             <ul className='char__grid'>
-                {setContent(process, () => renderItems(charList), newItemLoading)}
+                {elements}
             </ul>
             <button
                 className="button button__main button__long"
