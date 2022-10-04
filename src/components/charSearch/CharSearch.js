@@ -41,7 +41,6 @@ const CharSearch = () => {
             .then(onCharLoaded)
             .then(() => setProcess('confirmed'))
     }
-    console.log(process)
 
     const onCharLoaded = (char) => {
         setChar(char);

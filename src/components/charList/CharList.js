@@ -48,6 +48,7 @@ const CharList = ({ onCharSelected }) => {
 
     useEffect(() => {
         onRequest(offset, true);
+        // eslint-disable-next-line
     }, []);
 
     const onCharListLoaded = (newCharList) => {

@@ -15,6 +15,7 @@ const RandomChar = () => {
         const timerId = setInterval(updateChar, 60000);
 
         return () => clearInterval(timerId);
+        // eslint-disable-next-line
     }, []);
 
 

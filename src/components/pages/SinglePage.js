@@ -12,6 +12,7 @@ const SinglePage = ({ Component, dataType }) => {
 
     useEffect(() => {
         onRequest();
+        // eslint-disable-next-line
     }, [id]);
 
     const onRequest = () => {
