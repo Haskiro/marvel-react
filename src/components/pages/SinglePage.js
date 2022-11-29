@@ -1,19 +1,21 @@
 import AppBanner from '../appBanner/AppBanner';
 import useMarvelService from '../../services/MarvelService';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import setContent from '../../utils/setContent';
 import { fetchCharById } from '../charInfo/charInfoSlice';
+import { fetchComicById } from '../comicsList/comicInfoSlice';
 import { useSelector, useDispatch } from 'react-redux';
 
 
 const SinglePage = ({ Component, dataType }) => {
-    const [data, setData] = useState({});
-    const { getCharacter, getComics, setProcess } = useMarvelService();
+    const { getCharacter, getComics } = useMarvelService();
     const { id } = useParams();
     const dispatch = useDispatch();
-    const process = useSelector(state => state.charInfo.loadingStatus)
+    const charLoadingStatus = useSelector(state => state.charInfo.loadingStatus)
     const char = useSelector(state => state.charInfo.charInfo);
+    const comicLoadingStatus = useSelector(state => state.comicInfo.loadingStatus)
+    const comic = useSelector(state => state.comicInfo.comicInfo);
 
     useEffect(() => {
         onRequest();
@@ -27,16 +29,11 @@ const SinglePage = ({ Component, dataType }) => {
                 dispatch(fetchCharById({ charId: id, getCharacter }));
                 break;
             case 'comics':
-                getComics(id)
-                    .then(onDataLoaded)
-                    .then(() => setProcess('confirmed'));
+                dispatch(fetchComicById({ comicId: id, getComics }));
                 break;
             default:
                 break;
         }
-    }
-    const onDataLoaded = (data) => {
-        setData(data);
     }
 
     const styles = {
@@ -47,8 +44,8 @@ const SinglePage = ({ Component, dataType }) => {
     }
 
     const content = dataType === 'char' ?
-        setContent(process, Component, char, styles) :
-        setContent(process, Component, data, styles)
+        setContent(charLoadingStatus, Component, char, styles) :
+        setContent(comicLoadingStatus, Component, comic, styles)
 
     return (
         <>

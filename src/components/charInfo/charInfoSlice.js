@@ -14,7 +14,7 @@ export const fetchCharById = createAsyncThunk(
 )
 
 export const charInfoSlice = createSlice({
-    name: 'charList',
+    name: 'charInfo',
     initialState,
     reducers: {
     },

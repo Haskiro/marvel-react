@@ -1,5 +1,5 @@
 import './charList.scss';
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useEffect, useRef, useMemo } from 'react';
 import useMarvelService from '../../services/MarvelService';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Spinner from '../spinner/Spinner';

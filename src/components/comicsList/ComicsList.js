@@ -1,10 +1,12 @@
 import './comicsList.scss';
 import useMarvelService from '../../services/MarvelService';
-import { useEffect, useRef, useState, useMemo } from 'react';
+import { useEffect, useRef, useMemo } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
+import { fetchAllComics } from './comicsListSlice';
 
 const setContent = (process, Component, newItemLoading) => {
     switch (process) {
@@ -22,11 +24,15 @@ const setContent = (process, Component, newItemLoading) => {
 }
 
 const ComicsList = () => {
-    const { getAllComics, process, setProcess } = useMarvelService();
-    const [offset, setOffset] = useState(210);
-    const [comicsList, setComicsList] = useState([]);
-    const [newItemLoading, setNewItemLoading] = useState(false);
-    const [comicsEnded, setComicsEnded] = useState(false)
+    const comicsList = useSelector(state => state.comicsList.comicsList);
+    const dispatch = useDispatch();
+    const offset = useSelector(state => state.comicsList.offset);
+    const initial = useSelector(state => state.comicsList.initial);
+    const comicsEnded = useSelector(state => state.comicsList.comicsEnded);
+    const process = useSelector(state => state.comicsList.loadingStatus);
+    const newItemLoading = useSelector(state => state.comicsList.newItemLoading);
+
+    const { getAllComics } = useMarvelService();
 
     const refsList = useRef([]);
 
@@ -39,26 +45,9 @@ const ComicsList = () => {
     }
 
     useEffect(() => {
-        onRequest(offset, true);
+        dispatch(fetchAllComics({ offset, getAllComics }));
         // eslint-disable-next-line
     }, [])
-
-    const onRequest = (offset, initial = false) => {
-        initial ? setNewItemLoading(false) : setNewItemLoading(true);
-        getAllComics(offset)
-            .then(onComicsListLoaded)
-            .then(() => setProcess('confirmed'));
-    }
-
-    const onComicsListLoaded = (newComics) => {
-        let ended = false;
-        if (newComics.length < 12) ended = true;
-
-        setNewItemLoading(false);
-        setOffset(offset => offset + 12)
-        setComicsList([...comicsList, ...newComics]);
-        setComicsEnded(ended);
-    }
 
     const renderComics = (comicsList) => {
         return (
@@ -104,7 +93,7 @@ const ComicsList = () => {
 
     const elements = useMemo(() => {
         return (
-            setContent(process, () => renderComics(comicsList), newItemLoading)
+            setContent(process, () => renderComics(comicsList), !initial)
         )
         // eslint-disable-next-line
     }, [process])
@@ -118,7 +107,7 @@ const ComicsList = () => {
             <button
                 className="button button__main button__long"
                 onClick={() => {
-                    onRequest(offset);
+                    dispatch(fetchAllComics({ offset, getAllComics }));
                 }}
                 disabled={newItemLoading}
                 style={{ 'display': comicsEnded ? 'none' : 'block' }}
