@@ -8,7 +8,7 @@ import ErrorMessage from '../errorMessage/ErrorMessage';
 
 const setContent = (process, Component, newItemLoading) => {
     switch (process) {
-        case 'waiting':
+        case 'idle':
             return <Spinner className='comics-list-spinner' />;
         case 'loading':
             return newItemLoading ? <Component /> : <Spinner className='comics-list-spinner' />;

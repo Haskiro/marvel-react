@@ -3,25 +3,28 @@ import useMarvelService from '../../services/MarvelService';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import setContent from '../../utils/setContent';
+import { fetchCharById } from '../charInfo/charInfoSlice';
+import { useSelector, useDispatch } from 'react-redux';
 
 
 const SinglePage = ({ Component, dataType }) => {
     const [data, setData] = useState({});
-    const { getCharacter, getComics, clearError, process, setProcess } = useMarvelService();
+    const { getCharacter, getComics, setProcess } = useMarvelService();
     const { id } = useParams();
+    const dispatch = useDispatch();
+    const process = useSelector(state => state.charInfo.loadingStatus)
+    const char = useSelector(state => state.charInfo.charInfo);
 
     useEffect(() => {
         onRequest();
         // eslint-disable-next-line
     }, [id]);
 
+
     const onRequest = () => {
-        clearError()
         switch (dataType) {
             case 'char':
-                getCharacter(id)
-                    .then(onDataLoaded)
-                    .then(() => setProcess('confirmed'));
+                dispatch(fetchCharById({ charId: id, getCharacter }));
                 break;
             case 'comics':
                 getComics(id)
@@ -32,7 +35,6 @@ const SinglePage = ({ Component, dataType }) => {
                 break;
         }
     }
-
     const onDataLoaded = (data) => {
         setData(data);
     }
@@ -44,10 +46,14 @@ const SinglePage = ({ Component, dataType }) => {
         'transform': 'translateX(-50%)'
     }
 
+    const content = dataType === 'char' ?
+        setContent(process, Component, char, styles) :
+        setContent(process, Component, data, styles)
+
     return (
         <>
             <AppBanner />
-            {setContent(process, Component, data, styles)}
+            {content}
         </>
     )
 }
