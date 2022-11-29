@@ -8,7 +8,7 @@ import { Link } from 'react-router-dom';
 
 const setContent = (process, Component, Results, char) => {
     switch (process) {
-        case 'waiting':
+        case 'idle':
             return <Component loading={false} />;
         case 'loading':
             return <Component loading={true} />;

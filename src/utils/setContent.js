@@ -4,7 +4,7 @@ import ErrorMessage from '../components/errorMessage/ErrorMessage';
 
 const setContent = (process, Component, data, style = null) => {
     switch (process) {
-        case 'waiting':
+        case 'idle':
             return <Skeleton />;
         case 'loading':
             return <Spinner style={style} />;

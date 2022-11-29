@@ -1,31 +1,24 @@
 import './charInfo.scss';
 import PropTypes from 'prop-types';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import useMarvelService from '../../services/MarvelService';
 import setContent from '../../utils/setContent';
+import { fetchCharById } from "./charInfoSlice";
+import { useDispatch, useSelector } from 'react-redux';
 
 const CharInfo = ({ charId }) => {
 
-    const [char, setChar] = useState(null);
+    const char = useSelector(state => state.charInfo.charInfo);
+    const process = useSelector(state => state.charInfo.loadingStatus);
+    console.log(process)
 
-    const { getCharacter, clearError, process, setProcess } = useMarvelService();
-
-    const onCharLoaded = (char) => {
-        setChar(char);
-    }
+    const { getCharacter } = useMarvelService();
+    const dispatch = useDispatch();
 
     useEffect(() => {
-        updateChar();
+        if (charId) dispatch(fetchCharById({ charId, getCharacter }))
         // eslint-disable-next-line
     }, [charId]);
-
-    const updateChar = () => {
-        if (!charId) return;
-        clearError();
-        getCharacter(charId)
-            .then(onCharLoaded)
-            .then(() => setProcess('confirmed'))
-    }
 
     return (
         <div className="char__info">
