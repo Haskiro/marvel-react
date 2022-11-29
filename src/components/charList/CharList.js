@@ -4,10 +4,13 @@ import useMarvelService from '../../services/MarvelService';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchAllChars } from './charListSlice';
+
 
 const setContent = (process, Component, newItemLoading) => {
     switch (process) {
-        case 'waiting':
+        case 'idle':
             return <Spinner className='char-list-spinner' />;
         case 'loading':
             return newItemLoading ? <Component /> : <Spinner className='char-list-spinner' />;
@@ -16,18 +19,23 @@ const setContent = (process, Component, newItemLoading) => {
         case 'error':
             return <ErrorMessage />;
         default:
+            console.log(process)
             throw new Error('Unexpected process state');
     }
 }
 
 const CharList = ({ onCharSelected }) => {
 
-    const [charList, setCharList] = useState([]);
-    const [offset, setOffset] = useState(210);
-    const [newItemLoading, setNewItemLoading] = useState(false);
-    const [charEnded, setCharEnded] = useState(false);
+    const charList = useSelector(state => state.charList.charList);
+    const dispatch = useDispatch();
+    const offset = useSelector(state => state.charList.offset);
+    const initial = useSelector(state => state.charList.initial);
+    const charEnded = useSelector(state => state.charList.charEnded);
+    const process = useSelector(state => state.charList.loadingStatus);
+    const newItemLoading = useSelector(state => state.charList.newItemLoading);
 
     const refsList = useRef([]);
+    const { getAllCharacters } = useMarvelService();
 
     const focusOnItem = (id) => {
         refsList.current.forEach(item => {
@@ -37,31 +45,10 @@ const CharList = ({ onCharSelected }) => {
         refsList.current[id].focus();
     }
 
-    const { getAllCharacters, process, setProcess } = useMarvelService();
-
-    const onRequest = (offset, initial = false) => {
-        initial ? setNewItemLoading(false) : setNewItemLoading(true);
-        getAllCharacters(offset)
-            .then(onCharListLoaded)
-            .then(() => setProcess('confirmed'))
-    }
-
     useEffect(() => {
-        onRequest(offset, true);
+        dispatch(fetchAllChars({ offset, getAllCharacters }));
         // eslint-disable-next-line
     }, []);
-
-    const onCharListLoaded = (newCharList) => {
-        let ended = false;
-        if (newCharList.length < 9) {
-            ended = true;
-        }
-
-        setCharList(charList => [...charList, ...newCharList]);
-        setNewItemLoading(false);
-        setOffset(offset => offset + 9);
-        setCharEnded(ended);
-    }
 
     const renderItems = (charList) => {
         const items = charList.map((char, i) => {
@@ -110,7 +97,7 @@ const CharList = ({ onCharSelected }) => {
 
     const elements = useMemo(() => {
         return (
-            setContent(process, () => renderItems(charList), newItemLoading)
+            setContent(process, () => renderItems(charList), !initial)
         )
         // eslint-disable-next-line
     }, [process])
@@ -122,7 +109,7 @@ const CharList = ({ onCharSelected }) => {
             </ul>
             <button
                 className="button button__main button__long"
-                onClick={() => onRequest(offset)}
+                onClick={() => dispatch(fetchAllChars({ offset, getAllCharacters }))}
                 disabled={newItemLoading}
                 style={{ 'display': charEnded ? 'none' : 'block' }}
             >
