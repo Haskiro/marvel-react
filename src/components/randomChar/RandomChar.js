@@ -1,14 +1,18 @@
 import './randomChar.scss';
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import mjolnir from '../../resources/img/mjolnir.png';
 import useMarvelService from '../../services/MarvelService';
 import setContent from '../../utils/setContent';
+import { fetchCharById } from './randomCharSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const RandomChar = () => {
 
-    const [char, setChar] = useState({});
+    const char = useSelector(state => state.randomChar.char);
+    const process = useSelector(state => state.randomChar.loadingStatus);
+    const dispatch = useDispatch();
 
-    const { getCharacter, clearError, process, setProcess } = useMarvelService();
+    const { getCharacter } = useMarvelService();
 
     useEffect(() => {
         updateChar();
@@ -18,17 +22,10 @@ const RandomChar = () => {
         // eslint-disable-next-line
     }, []);
 
-
-    const onCharLoaded = (char) => {
-        setChar(char);
-    }
-
     const updateChar = () => {
-        clearError();
         const id = Math.floor(Math.random() * (1011400 - 1011000) + 1011000);
-        getCharacter(id)
-            .then(onCharLoaded)
-            .then(() => setProcess('confirmed'));
+
+        dispatch(fetchCharById({ charId: id, getCharacter }))
     }
 
     const styles = {
