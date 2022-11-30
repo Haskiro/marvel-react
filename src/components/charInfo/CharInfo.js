@@ -6,11 +6,11 @@ import setContent from '../../utils/setContent';
 import { fetchCharById } from "./charInfoSlice";
 import { useDispatch, useSelector } from 'react-redux';
 
-const CharInfo = ({ charId }) => {
+const CharInfo = () => {
 
     const char = useSelector(state => state.charInfo.charInfo);
+    const charId = useSelector(state => state.charInfo.charId);
     const process = useSelector(state => state.charInfo.loadingStatus);
-    console.log(process)
 
     const { getCharacter } = useMarvelService();
     const dispatch = useDispatch();

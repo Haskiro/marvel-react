@@ -2,18 +2,11 @@ import CharList from '../charList/CharList';
 import CharInfo from '../charInfo/CharInfo';
 import ErrorBoundary from '../errorBoundary/ErrorBoundary';
 import RandomChar from '../randomChar/RandomChar';
-import { useState } from 'react';
 import decoration from '../../resources/img/vision.png';
 import CharSearch from '../charSearch/CharSearch';
 import { Helmet } from 'react-helmet';
 
 const MainPage = () => {
-    const [selectedChar, setSelectedChar] = useState(null);
-
-    const onCharSelected = (id) => {
-        setSelectedChar(id);
-    }
-
     return (
         <>
             <Helmet>
@@ -28,11 +21,11 @@ const MainPage = () => {
             </ErrorBoundary>
             <div className="char__content">
                 <ErrorBoundary>
-                    <CharList onCharSelected={onCharSelected} />
+                    <CharList />
                 </ErrorBoundary>
                 <div>
                     <ErrorBoundary>
-                        <CharInfo charId={selectedChar} />
+                        <CharInfo />
                     </ErrorBoundary>
                     <ErrorBoundary>
                         <CharSearch />

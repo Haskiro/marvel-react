@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 
 const initialState = {
+    charId: null,
     charInfo: null,
     loadingStatus: 'idle',
 }
@@ -17,6 +18,9 @@ export const charInfoSlice = createSlice({
     name: 'charInfo',
     initialState,
     reducers: {
+        addCharId: (state, action) => {
+            state.charId = action.payload;
+        }
     },
     extraReducers: builder => {
         builder
@@ -33,5 +37,7 @@ export const charInfoSlice = createSlice({
             .addDefaultCase(() => { })
     }
 })
+
+export const { addCharId } = charInfoSlice.actions;
 
 export default charInfoSlice.reducer;

@@ -6,6 +6,7 @@ import Spinner from '../spinner/Spinner';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchAllChars } from './charListSlice';
+import { addCharId } from '../charInfo/charInfoSlice';
 
 
 const setContent = (process, Component, newItemLoading) => {
@@ -24,7 +25,7 @@ const setContent = (process, Component, newItemLoading) => {
     }
 }
 
-const CharList = ({ onCharSelected }) => {
+const CharList = () => {
 
     const charList = useSelector(state => state.charList.charList);
     const dispatch = useDispatch();
@@ -71,12 +72,12 @@ const CharList = ({ onCharSelected }) => {
                         tabIndex={0}
                         ref={el => refsList.current[i] = el}
                         onClick={() => {
-                            onCharSelected(char.id)
+                            dispatch(addCharId(char.id))
                             focusOnItem(i);
                         }}
                         onKeyPress={(e) => {
                             if (e.key === ' ' || e.key === "Enter") {
-                                onCharSelected(char.id);
+                                dispatch(addCharId(char.id))
                                 focusOnItem(i);
                             }
                         }}
