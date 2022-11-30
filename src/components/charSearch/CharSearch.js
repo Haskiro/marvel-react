@@ -1,12 +1,13 @@
 import './CharSearch.scss';
 import { Form, Field, Formik, ErrorMessage as FormikErrorMessage } from 'formik';
 import useMarvelService from '../../services/MarvelService';
-import { useState } from 'react';
+import { fetchCharByName } from './charSearchSlice';
 import * as Yup from 'yup';
 import ErrorMessage from '../errorMessage/ErrorMessage';
 import { Link } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
 
-const setContent = (process, Component, Results, char) => {
+const setContent = (process, Component, Results, chars) => {
     switch (process) {
         case 'idle':
             return <Component loading={false} />;
@@ -16,7 +17,7 @@ const setContent = (process, Component, Results, char) => {
             return (
                 <>
                     <Component loading={false} />
-                    <Results char={char} />
+                    <Results chars={chars} />
                 </>
             );
         case 'error':
@@ -32,26 +33,21 @@ const setContent = (process, Component, Results, char) => {
 
 
 const CharSearch = () => {
-    const { getCharacterByName, process, setProcess, clearError } = useMarvelService();
-    const [char, setChar] = useState([])
+    const { getCharacterByName } = useMarvelService();
+    const dispatch = useDispatch();
+    const chars = useSelector(state => state.charSearch.chars);
+    const process = useSelector(state => state.charSearch.loadingStatus);
 
     const updateChar = (charName) => {
-        clearError();
-        getCharacterByName(charName)
-            .then(onCharLoaded)
-            .then(() => setProcess('confirmed'))
+        dispatch(fetchCharByName({ charName, getCharacterByName }));
     }
 
-    const onCharLoaded = (char) => {
-        setChar(char);
-    }
-
-    const Results = ({ char }) => {
+    const Results = ({ chars }) => {
         return (
-            (char.length > 0) ?
+            (chars.length > 0) ?
                 <div className="char__search-wrapper">
-                    <div className="char__search-success">There is! Visit {char[0].name} page?</div>
-                    <Link to={`/char/${char[0].id}`} className="button button__secondary">
+                    <div className="char__search-success">There is! Visit {chars[0].name} page?</div>
+                    <Link to={`/char/${chars[0].id}`} className="button button__secondary">
                         <div className="inner">To page</div>
                     </Link>
                 </div> :
@@ -98,7 +94,7 @@ const CharSearch = () => {
 
     return (
         <div className="char__search-form">
-            {setContent(process, FormComponent, Results, char)}
+            {setContent(process, FormComponent, Results, chars)}
         </div>
     )
 }
