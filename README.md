@@ -22,7 +22,7 @@ Marvel characters and comics.
 
 -  List of marvel characters
 -  Random character block, is updated every 60sec, can be rerolled force
--  Info block, while no character clicked, skeleton displayed, else info about chosen char is outputted
+-  Info block, while no character is clicked, skeleton displayed, else info about chosen char is shown
 -  Searching characters by their name
 -  Loading additional heroes by pressing the load button
 
